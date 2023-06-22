@@ -1,8 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { TextInput,TouchableOpacity,Text, View,StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import axios from "axios";
 export default function SignUp(){
+    const [username,setUsername]=useState("")
+    const [email,setEmail]=useState("")
+    const [password,setPassword]=useState("")
     const CustomButton = ({ onPress, title, buttonStyle, textStyle }) => (
         <TouchableOpacity style={[styles.button, buttonStyle]} onPress={onPress}>
             <Text style={{ color: 'black',fontSize:16,marginLeft:15 }}>{title}</Text>
@@ -17,6 +21,19 @@ export default function SignUp(){
     const handleNavigation=()=>{
         navigation.navigate("signin")
     }
+    const handleSubmit=async(e)=>{
+        if(!username||!email||!password){
+            alert("please fill all fields")
+        }
+        e.preventDefaults()
+        await axios.post("http://http/localhost:4000/auth/register",{username,email,password})
+        .then((res)=>{
+            console.log(res)
+        })
+        .catch((err)=>{
+            console.log(err)
+        })
+    }
     return(
         <View style={styles.container}>
             <View>
@@ -24,7 +41,7 @@ export default function SignUp(){
                 <Text style={styles.please}>Please fill the input below here</Text>
                 <View style={styles.withIcons}>
                     <Ionicons name="person-outline" color="#3E3A4F" style={styles.icons}></Ionicons>
-                    <TextInput placeholder="Full Name" style={styles.inputs} placeholderTextColor="#3E3A4F"></TextInput>
+                    <TextInput placeholder="Full Name" style={styles.inputs} placeholderTextColor="#3E3A4F" value={username} onChangeText={text=>setUsername(text)}></TextInput>
                 </View>
                 <View style={styles.withIcons}>
                     <Ionicons name="phone-portrait" color="#3E3A4F" style={styles.icons}></Ionicons>
@@ -32,13 +49,13 @@ export default function SignUp(){
                 </View>
                 <View style={styles.withIcons}>
                     <Ionicons name="mail-open-outline" color="#3E3A4F" style={styles.icons}></Ionicons>
-                    <TextInput placeholder="Email" style={styles.inputs} placeholderTextColor="#3E3A4F"></TextInput>
+                    <TextInput placeholder="Email" style={styles.inputs} placeholderTextColor="#3E3A4F" value={email} onChangeText={text=>setEmail(text)}></TextInput>
                 </View>
                 <View style={styles.withIcons}>
                     <Ionicons name="lock-closed-outline" color="#3E3A4F" style={styles.icons}></Ionicons>
-                    <TextInput placeholder="Password" style={styles.inputs} placeholderTextColor="#3E3A4F"></TextInput>
+                    <TextInput placeholder="Password" style={styles.inputs} placeholderTextColor="#3E3A4F" value={password} onChangeText={text=>setPassword(text)} secureTextEntry></TextInput>
                 </View>
-                <CustomButton title="Sign Up"/>
+                <CustomButton title="Sign Up" onPress={handleSubmit}/>
                 <View style={styles.bottom}>
                     <Text style={styles.already}>Already have an account?</Text>
                     <CustomButton1 title="Sign in" onPress={handleNavigation}/>
